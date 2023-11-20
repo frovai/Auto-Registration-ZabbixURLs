@@ -1,4 +1,7 @@
-# Installation
+# Auto-Registration-ZabbixURLs
+Repository with Ansible automation to install Zabbix Server, CI/CD with Github Actions to auto-registrate WebChecks inside Zabbix based on DNS registries
+
+## Installation
 
 #### Step 1: Ansible Installation
 
