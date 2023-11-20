@@ -1,0 +1,1 @@
+rancher.MYDOMAIN.com.br,30s

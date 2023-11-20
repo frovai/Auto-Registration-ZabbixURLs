@@ -1,0 +1,14 @@
+PidFile=/run/zabbix/zabbix_agentd.pid
+LogFile=/var/log/zabbix/zabbix_agentd.log
+LogFileSize=0
+Server={{ Server }}
+ServerActive={{ ServerActive }}
+HostnameItem=system.hostname
+Include=/etc/zabbix/zabbix_agentd.d/*.conf
+HostMetadata={{ HostMetadata }}
+RefreshActiveChecks={{ RefreshActiveChecks }}
+EnableRemoteCommands=1 
+LogRemoteCommands=1
+ListenIP=0.0.0.0
+ListenPort=10050
+AllowKey=system.run[*]

@@ -1,0 +1,43 @@
+---
+  #- name: changing the hostname
+  #  shell: "{{item}}"
+  #  with_items:
+  #    - "sudo hostnamectl set-hostname pool_teste"
+  
+
+  - name: checking the sudoers file
+    ansible.builtin.lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%zabbix ALL=(ALL)'
+      line: 'zabbix ALL=(ALL) NOPASSWD:ALL'
+      #validate: 'visudo -c'
+
+
+  - name: checking the zabbix_agentd.conf file
+    ansible.builtin.lineinfile:
+      path: /etc/zabbix/zabbix_agentd.conf
+      state: present
+      regexp: '^%EnableRemoteCommands=1'
+      line: 'EnableRemoteCommands=1'
+      #validate: 'visudo -c'
+
+
+  - name: checking the zabbix_agentd.conf file
+    ansible.builtin.lineinfile:
+      path: /etc/zabbix/zabbix_agentd.conf
+      state: present
+      regexp: '^%LogRemoteCommands=1'
+      line: 'LogRemoteCommands=1'
+      #validate: 'visudo -c'
+
+
+  - name: restart zabbix-agent
+    ansible.builtin.service:
+      name: zabbix-agent.service
+      state: restarted
+
+
+
+
+  

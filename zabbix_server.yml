@@ -1,0 +1,7 @@
+---
+- name: Run_zabbix_server_intallation
+  hosts: zabbix-server
+  become: yes
+  become_user: root
+  roles:
+    - role: zabbix_server

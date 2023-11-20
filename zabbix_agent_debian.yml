@@ -1,0 +1,9 @@
+---
+- name: zabbix_agent_debian
+  hosts: zabbix_agent_debian
+  become: yes
+  become_user: root
+  vars_files:
+    - "group_vars/debian_zabbix_vars_agentd.yml"
+  roles:
+    - role: zabbix_agent_debian

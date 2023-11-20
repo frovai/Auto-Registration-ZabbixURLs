@@ -1,0 +1,64 @@
+name: CI - Zabbix
+
+on:
+  workflow_dispatch:
+    inputs:       
+      env:
+        type: choice
+        description: Script name?
+        options: 
+        - registre_url_create_trigger
+        - delete_host
+        - delete_webchecks
+        - update_webchecks
+    runs-on: k8s-runner
+
+env:
+  ZABBIX_PASSWORD: ${{ secrets.ZABBIX_PASSWORD }}      
+  CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+  CLOUDFLARE_KEY_ID: ${{ secrets.CLOUDFLARE_KEY_ID }}
+  CLOUDFLARE_EMAIL_ZABBIX: ${{ secrets.CLOUDFLARE_EMAIL_ZABBIX }}
+  HOST_NAME_ZABBIX: ${{ secrets.HOST_NAME_ZABBIX }}
+  URL_ZABBIX_SERVER: ${{ secrets.URL_ZABBIX_SERVER}}
+
+jobs:
+  registre_url_create_trigger:
+    if: ${{ github.event.inputs.env == 'registre_url_create_trigger' }} 
+    runs-on: k8s-runner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: registre_url_create_trigger     
+        run: |
+          . scripts_config_zabbix/registre_url_zabbix.sh
+          . scripts_config_zabbix/create_trigger_zabbix.sh                 
+
+  delete_host:
+    if: ${{ github.event.inputs.env == 'delete_host' }} 
+    runs-on: k8s-runner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: delete_host     
+        run: |
+          . scripts_config_zabbix/delete_host_zabbix.sh               
+
+  delete_webchecks:
+    if: ${{ github.event.inputs.env == 'delete_webchecks' }} 
+    runs-on: k8s-runner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: delete_webchecks    
+        run: |
+          . scripts_config_zabbix/delete_webchecks_zabbix.sh               
+
+  update_webchecks:
+    if: ${{ github.event.inputs.env == 'update_webchecks' }} 
+    runs-on: k8s-runner
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: update_webchecks   
+        run: |
+          bash -x scripts_config_zabbix/update_webchecks_zabbix.sh            

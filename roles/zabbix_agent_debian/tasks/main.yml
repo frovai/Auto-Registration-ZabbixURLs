@@ -1,0 +1,100 @@
+---
+  - name: Remove zabbix-agent package
+    apt:
+      name: zabbix-agent
+      state: absent
+
+
+  - name: Update all packages
+    apt:
+      update_cache: yes
+
+
+  #só ativar esse passo se eu estiver subindo uma máquina nova
+  #- name: Update all packages to their latest version
+  #  apt:
+  #    name: "*"
+  #    state: latest
+
+
+  - name: Install a list of packages
+    apt:
+      pkg:
+      - net-tools
+      - glances
+      - htop
+      - tcpdump  
+
+
+  - name: Dowload and install library zabbix 5.4
+    apt:
+      deb: https://repo.zabbix.com/zabbix/5.4/debian/pool/main/z/zabbix-release/zabbix-release_5.4-1+debian10_all.deb
+      
+
+  - name: Apt-get update -y
+    apt:
+      update_cache: yes
+
+
+  - name: Install zabbix-agent package
+    apt:
+      pkg:
+      - zabbix-agent
+
+
+  - name: Remove useless packages from the cache
+    apt:
+      autoclean: yes
+
+
+  - name: Remove dependencies that are no longer required
+    apt:
+      autoremove: yes
+
+
+  - name: Create config for zabbix_agentd
+    template:
+      src: zabbix_agentd.conf.j2
+      dest: "/etc/zabbix/zabbix_agentd.conf"
+      owner: root
+      group: root
+      mode: "0644"
+    become_user: root
+    become: true
+
+
+  - name: checking the sudoers file
+    ansible.builtin.lineinfile:
+      path: /etc/sudoers
+      state: present
+      regexp: '^%zabbix ALL=(ALL)'
+      line: 'zabbix ALL=(ALL) NOPASSWD: ALL'
+      #validate: 'visudo -c'
+  
+
+  - name: start zabbix-agent
+    ansible.builtin.service:
+      name: zabbix-agent.service
+      state: started
+
+
+  - name: Enable zabbix-agent
+    ansible.builtin.service:
+      name: zabbix-agent.service
+      enabled: yes
+
+  
+
+
+
+      
+
+  
+
+
+
+
+  
+    
+
+    

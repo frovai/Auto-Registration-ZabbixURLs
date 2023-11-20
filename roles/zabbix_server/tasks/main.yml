@@ -1,0 +1,106 @@
+---
+  - name: update repositories
+    shell: "{{item}}"
+    with_items:
+      - "sudo apt-get update -y"
+      - "sudo apt install net-tools glances htop tcpdump -y"
+       
+  - name: Dowload zabbix
+    get_url:
+      url: https://repo.zabbix.com/zabbix/6.2/ubuntu/pool/main/z/zabbix-release/zabbix-release_6.2-2+ubuntu22.04_all.deb
+      dest: /home/ubuntu/zabbix-release_6.2-2+ubuntu22.04_all.deb
+
+  - name: continuation of zabbix installation
+    shell: "{{item}}"
+    with_items:
+      - "sudo dpkg -i /home/ubuntu/zabbix-release_6.2-2+ubuntu22.04_all.deb"
+      - "sudo apt-get update -y"
+      - "sudo apt install zabbix-server-mysql zabbix-frontend-php zabbix-nginx-conf zabbix-sql-scripts zabbix-agent -y"
+      - "sudo apt install mysql-server -y"
+
+  - name: Creating database
+    shell: "sudo mysql -uroot -e 'create database zabbix character set utf8mb4 collate utf8mb4_bin'"
+    register: create_database_task   
+    ignore_errors: True
+
+  - name: creating user
+    shell:
+      cmd: |
+        mysql -uroot <<'EOF'
+        create user zabbix@localhost identified by 'SUASENHAAQUI';
+        EOF
+    tags: migration_restore
+    ignore_errors: True
+
+  - name: change permissions on database
+    shell:
+      cmd: |
+        mysql -uroot <<'EOF'
+        grant all privileges on zabbix.* to zabbix@localhost;
+        EOF
+    tags: chance_permissions
+    ignore_errors: True
+
+  - name: to relax the previous conditions 
+    shell:
+      cmd: |
+        mysql -uroot <<'EOF'
+        set global log_bin_trust_function_creators = 1;
+        EOF
+    tags: relax_conditions
+    ignore_errors: True
+
+  - name: change file
+    shell: "{{item}}"
+    with_items:
+      - "sudo zcat /usr/share/zabbix-sql-scripts/mysql/server.sql.gz | mysql --default-character-set=utf8mb4 -uzabbix -pSUASENHAAQUI zabbix"
+    ignore_errors: True
+
+  - name: alter previous conditions 
+    shell:
+      cmd: |
+        mysql -uroot <<'EOF'
+        set global log_bin_trust_function_creators = 0;
+        EOF
+    tags: alter_conditions
+    ignore_errors: True
+
+  - name: copy file zabbix.conf.php
+    ansible.builtin.copy:
+      src: ./files/zabbix.conf.php
+      dest: /etc/zabbix/web/zabbix.conf.php
+      owner: www-data
+      group: www-data
+      mode: '0600'
+
+  - name: copy file zabbix_server.conf
+    ansible.builtin.copy:
+      src: ./files/zabbix_server.conf
+      dest: /etc/zabbix/zabbix_server.conf
+      owner: root
+      group: root
+      mode: '0600'
+
+  - name: copy file nginx.conf  ####
+    ansible.builtin.copy:
+      src: ./files/nginx.conf
+      dest: /tmp/nginx.conf
+      owner: root
+      group: root
+      mode: '0644'
+
+  - name: Disable apache-server  #######
+    ansible.builtin.service:
+      name: apache2.service 
+      state: disable             #######
+      
+  - name: Restart zabbix-server 
+    ansible.builtin.service:
+      name: zabbix-server 
+      state: restarted
+
+  - name: Enable zabbix-server 
+    ansible.builtin.service:
+      name: zabbix-server 
+      enabled: yes
+      

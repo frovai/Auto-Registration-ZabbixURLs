@@ -1,0 +1,9 @@
+mywebsite1.MYDOMAIN.com.br
+mywebsite2.MYDOMAIN.com.br
+mywebsite3.MYDOMAIN.com.br
+mywebsite4.MYDOMAIN.com.br
+mywebsite5.MYDOMAIN.com.br
+mywebsite6.MYDOMAIN.com.br
+mywebsite7.MYDOMAIN.com.br
+mywebsite8.MYDOMAIN.com.br
+mywebsite9.MYDOMAIN.com.br

@@ -1,0 +1,9 @@
+mywebsite1.MYDOMAIN.com.br,/healthcheck
+mywebsite2.MYDOMAIN.com.br,/health
+mywebsite3.MYDOMAIN.com.br,/api/health
+mywebsite4.MYDOMAIN.com.br,/api/healthcheck
+mywebsite5.MYDOMAIN.com.br,
+mywebsite6.MYDOMAIN.com.br,
+mywebsite7.MYDOMAIN.com.br,/healthcheck
+mywebsite8.MYDOMAIN.com.br,/healthcheck
+mywebsite9.MYDOMAIN.com.br,/api/health
